@@ -10,6 +10,8 @@ input {
     height: 80px;
     background-image: url("../images/box.svg");
 
+    background-color: #3D538A; 
+
     color: #FFF;
     text-align: center;
     /* Bold_40px */
@@ -158,7 +160,6 @@ input {
     border-radius: 50px;
     background: #15C2B8;
 }
-
 
 /* footer */
 .footer-text {
