@@ -9,17 +9,12 @@ const defaultBtn = document.querySelector(".default-btn");
 const defaultTxt = document.querySelector(".default-txt");
 const resetBtn = document.querySelector(".reset-btn");
 
-let timer_sec;
-let timer_hrs;
-let timer_mins;
-let timer_secs;
+let seconds_timer = null;
+let mins_timer = null;
+let hrs_timer = null;
 
-//let totalSeconds = secInput.value;
-
-/* start버튼을 누르면 start의 색깔이 바뀌고, text도 바뀐다. start => pause pause => start*/
-/* start 버튼을 누르면 입력된 타이머가 차감된다 */
-defaultBtn.addEventListener("click", function () {
-  let totalSeconds = secInput.value;
+const timer = () => {
+  let totalSecs = secInput.value;
   let totalMins = minInput.value;
   let totalHrs = hrsInput.value;
 
@@ -30,31 +25,55 @@ defaultBtn.addEventListener("click", function () {
     defaultTxt.innerHTML = "Start";
   }
 
-  let hrs_timer = setInterval(() => {});
+  seconds_timer = setInterval(() => {
+    totalSecs--;
+    console.log(totalSecs);
+    secInput.value = totalSecs;
 
-  let seconds_timer = setInterval(() => {
-    totalSeconds--;
-    console.log(totalSeconds);
-    secInput.value = totalSeconds;
+    if (totalMins !== 0 && totalSecs === 0) {
+      totalSecs = "60";
+      totalMins--;
+      minInput.value = totalMins;
 
-    if (totalSeconds === 0) {
-      let mins_timer = setInterval(() => {
-        totalMins--;
-        minInput.value = totalMins;
-      }, 60000);
-
+      //hours does not deduct after first deduction
+      if (totalHrs !== 0 && totalMins === 0) {
+        totalMins = "60";
+        totalHrs--;
+        hrsInput.value = totalHrs;
+      }
+    } else if (totalSecs === 0 && totalMins === 0) {
       clearInterval(seconds_timer);
-      alert("타이머가 끝났습니다!");
+      alert("Time's Up!");
       secInput.value = "0";
 
       defaultBtn.classList.remove("pause");
-      defaultTxt.innerHTML = "Start";
+      defaultBtn.innerHTML = "Start";
     }
   }, 1000);
+};
+
+//pause and reset is not working properly,
+//probably because the seconds_timer's setInterval id is being called
+//inside the timer function.
+//if thats not the case, i dont know why the fuck is clearInterval aint working
+defaultBtn.addEventListener("click", () => {
+  if (seconds_timer == null) {
+    timer();
+  } else if (seconds_timer !== null) {
+    clearInterval(seconds_timer);
+    timer();
+  }
+});
+
+resetBtn.addEventListener("click", () => {
+  secInput.value = "00";
+  minInput.value = "00";
+  hrsInput.value = "00";
+  clearInterval(seconds_timer);
 });
 
 /* 현재 문제:
-1. 버튼을 누르면 setInterval 함수가 계속 호출됨
-2. pause를 눌렀을때 숫자를 멈추는 방법을 모르겠음
-3. 시 -> 분 -> 초 순서대로 숫자가 차감되는법
+1. 입력전 디폴트로 숫자가 00으로 세팅되어있게하기
+2. pause기능 구현
+3. reset기능 구현
  */
